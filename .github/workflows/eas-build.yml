@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   publish:
-    name: Install and publish
+    name: Install and build EAS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -14,10 +14,14 @@ jobs:
         with:
           node-version: 16.x
           cache: yarn
-      - uses: expo/expo-github-action@v7
+      - name: Setup Expo and EAS
+        uses: expo/expo-github-action@v7
         with:
           expo-version: 5.x
+          eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn policies set-version 1.22.17
-      - run: yarn install --frozen-lockfile
-      - run: expo publish --non-interactive
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build on EAS
+        run: eas build --platform android --non-interactive
