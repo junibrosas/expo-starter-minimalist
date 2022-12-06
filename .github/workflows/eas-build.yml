@@ -1,9 +1,6 @@
 name: Expo CI
 
-on:
-  push:
-    branches:
-      - main
+on: [pull_request]
 jobs:
   publish:
     name: Install and build EAS
@@ -14,6 +11,7 @@ jobs:
         with:
           node-version: 16.x
           cache: yarn
+
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v7
         with:
@@ -21,7 +19,14 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: yarn policies set-version 1.22.17
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Build on EAS
-        run: eas build --platform android --non-interactive
+
+      - name: 🚀 Publish preview
+        run: expo publish --release-channel=pr-${{ github.event.number }} --non-interactive
+
+      - name: 💬 Comment preview
+        uses: expo/expo-github-action/preview-comment@v7
+        with:
+          channel: pr-${{ github.event.number }}
