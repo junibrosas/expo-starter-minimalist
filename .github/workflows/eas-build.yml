@@ -24,4 +24,4 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build on EAS
-        run: eas build --platform android --non-interactive
+        run: eas build --platform android --non-interactive --profile=development
